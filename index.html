@@ -145,6 +145,27 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
 .ex button{text-align:left;font:500 14.5px var(--f-body);border:0;border-bottom:1px solid var(--line);background:none;min-height:38px;padding:4px 2px;cursor:pointer}
 .ex button:hover{background:var(--panel-2);text-decoration:underline;text-underline-offset:3px}
 .hint{font-size:13px;color:var(--muted);margin:0}
+/* análisis RLC en serie */
+.rlc h3{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
+#rlc-body{display:flex;flex-direction:column;gap:8px}
+.res-big{margin:0;font-size:21px;font-weight:700;line-height:1.2}
+.res-big span{display:block;margin-top:2px;font-size:15px;font-weight:500;line-height:1.35}
+.cmp{position:relative;height:14px;background:var(--panel-2);border:1px solid var(--line)}
+.cmp i{position:absolute;left:0;top:0;bottom:0;background:var(--tr-i)}
+.cmp b{position:absolute;top:-5px;bottom:-5px;width:2px;margin-left:-1px;background:var(--ink)}
+.cmp-cap{margin:0;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.cmp-lab{display:grid;grid-template-columns:1fr auto 1fr;margin-top:-4px;font-size:12.5px;color:var(--muted)}
+.cmp-lab span:last-child{text-align:right}
+.cmp2{display:grid;grid-template-columns:30px minmax(0,1fr) 64px;gap:8px;align-items:center;font-size:14px;font-variant-numeric:tabular-nums}
+.cmp2 span:last-child{text-align:right;font-weight:600}
+.calc summary{cursor:pointer;font-weight:600;min-height:36px;display:flex;align-items:center;gap:6px}
+.calc summary::before{content:'▸';font-size:12px}.calc[open] summary::before{content:'▾'}
+.calc summary::-webkit-details-marker{display:none}.calc summary{list-style:none}
+.calc h4{margin:8px 0 2px;font-size:13px;font-weight:600;color:var(--muted)}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;margin:0;font-size:14px;font-variant-numeric:tabular-nums}
+.kv dt small{color:var(--muted);font-size:12.5px}
+.kv dd{margin:0;text-align:right;font-weight:600;white-space:nowrap}
+#rlccv{display:block;width:100%;height:150px;margin-top:6px;border:1px solid var(--line)}
 
 /* datos del circuito: la firma, el resaltador une la mesa con su fila */
 .datos{display:flex;flex-direction:column;gap:6px}
@@ -227,7 +248,7 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
   #chcv{height:120px}
   .btn,.icon-btn,.zoom button,.x,select{min-height:44px}
   .icon-btn,.zoom button,.x{min-width:44px}
-  .opt,.ex button{min-height:44px}
+  .opt,.ex button,.calc summary{min-height:44px}
   .zoom{flex-direction:row}.zoom button+button{border-top:0;border-left:1px solid var(--line)}
   .dt th,.dt td{height:46px}
   .seg button{height:44px}
@@ -283,6 +304,13 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
         <table class="dt"><colgroup><col class="c1"><col class="cv"><col class="cv"><col class="cp"></colgroup><thead id="datos-head"></thead><tbody id="datos-body"></tbody></table>
         <p class="hint" id="datos-empty" hidden>Sin componentes. Elige un ejemplo o toca uno de la caja para empezar.</p>
       </div>
+    </section>
+    <section class="sec rlc" id="rlc" aria-live="polite">
+      <h2>Análisis RLC en serie</h2>
+      <p class="hint" id="rlc-msg"></p>
+      <div id="rlc-body"></div>
+      <canvas id="rlccv" hidden role="img" aria-label="Gráfica de la corriente eficaz en función de la frecuencia"></canvas>
+      <div id="rlc-calc"></div>
     </section>
     <section class="sec">
       <h2>Instrumentos</h2>
@@ -345,6 +373,8 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
       <li><b>Voltímetro:</b> actívalo en Instrumentos y lleva la punta roja y la negra a dos puntos del circuito.</li>
       <li><b>Lectura de los instrumentos:</b> en Instrumentos elige valor instantáneo, eficaz (rms) o máximo. El eficaz y el máximo se renuevan al completar cada periodo.</li>
       <li><b>Gráfica:</b> pasa el puntero sobre ella o tócala para leer t, v e i en ese punto. En CA, debajo aparecen Umáx, Imáx, T, f y φ.</li>
+      <li><b>Análisis RLC en serie:</b> en el panel lateral, con todo en una sola malla. Con pila e interruptor te dice cómo se apaga la corriente al encender; con fuente CA, si el circuito es inductivo, capacitivo o está en resonancia, con la gráfica de I<sub>rms</sub> vs f. Las fórmulas están en «Ver cálculos».</li>
+      <li><b>Amortiguamiento, como un columpio:</b> imagina que empujas un columpio y lo sueltas; la resistencia es el freno. <b>Subamortiguado</b> (R &lt; R<sub>c</sub>, poco freno): va y viene, cada vez menos, hasta parar. <b>Crítico</b> (R = R<sub>c</sub>): vuelve al centro lo más rápido posible, sin pasarse. <b>Sobreamortiguado</b> (R &gt; R<sub>c</sub>, mucho freno): vuelve despacio, como si se moviera en miel, sin pasarse.</li>
       <li><b>Diagrama fasorial:</b> en CA, toca una resistencia, un foco, una bobina, un capacitor o la fuente para ver U, I y su desfase.</li>
       <li><b>Mover la vista:</b> arrastra el fondo; acerca o aleja con la rueda del mouse o los botones + y −.</li>
       <li>La pila es ideal si su resistencia interna es 0. La fuente CA entrega v(t) = V<sub>m</sub> sen(2πft).</li>
@@ -372,6 +402,8 @@ function eng(v,unit,dig){dig=dig||3;unit=unit||'';
 function engIn(v){const a=Math.abs(v);if(a<1e-15)return '0';for(const [m,p] of PREF){if(a>=m*0.9995||m===1e-12)return Number((v/m).toPrecision(4)).toString()+(p==='µ'?'u':p);}}
 /* Frecuencias: bajo 1 kHz se escriben en Hz con decimales (0.97 Hz, no 970 mHz), como en el curso */
 function fmtHz(v,dig){return Math.abs(v)<1000&&Math.abs(v)>=1e-9?Number(v.toPrecision(dig||3)).toString()+' Hz':eng(v,'Hz',dig);}
+/* Unidades inversas (s⁻¹, rad/s): sin prefijos SI, el número con decimales (0.5 s⁻¹, no 500 ms⁻¹) */
+function fmtInv(v,unit,dig){return isFinite(v)?Number(v.toPrecision(dig||3)).toString().replace('-','−')+' '+unit:eng(v,unit);}
 const inVal=(p,v)=>p.u==='Hz'&&v<1000?Number(v.toPrecision(4)).toString():engIn(v);
 function parseEng(s){s=String(s).trim().replace(',','.').replace('µ','u');
   const m=s.match(/^([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s*([GMkmunp]?)/);if(!m)return NaN;
@@ -381,7 +413,7 @@ function parseEng(s){s=String(s).trim().replace(',','.').replace('µ','u');
 const TYPES={
   wire:{name:'Cable',pre:'W',len:110,body:0},
   battery:{name:'Pila',pre:'E',len:150,body:78,src:true,params:[{k:'V',lab:'Voltaje',min:0.1,max:120,u:'V'},{k:'r',lab:'Resistencia interna',min:0,max:10,u:'Ω',lin:true}]},
-  ac:{name:'Fuente CA',pre:'Vca',len:150,body:50,src:true,params:[{k:'Vm',lab:'Amplitud Vm',min:0.1,max:120,u:'V'},{k:'f',lab:'Frecuencia',min:0.01,max:1000,u:'Hz'}]},
+  ac:{name:'Fuente CA',pre:'Vca',len:150,body:50,src:true,params:[{k:'Vm',lab:'Amplitud Vm',min:0.1,max:200,u:'V'},{k:'f',lab:'Frecuencia',min:0.01,max:1000,u:'Hz'}]},
   resistor:{name:'Resistencia',pre:'R',len:150,body:66,params:[{k:'R',lab:'Resistencia',min:0.1,max:1e6,u:'Ω'}]},
   bulb:{name:'Foco',pre:'F',len:150,body:48,params:[{k:'R',lab:'Resistencia',min:0.1,max:1e4,u:'Ω'}]},
   capacitor:{name:'Capacitor',pre:'C',len:150,body:20,params:[{k:'C',lab:'Capacitancia',min:1e-6,max:1,u:'F'}]},
@@ -923,6 +955,73 @@ function updDatos(){const els=E.filter(e=>DT.includes(e.type)&&idx.has(e.a)&&idx
 $('datos-mode').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b||b.disabled)return;dtMode=b.dataset.m;dtKey='';updDatos();});
 $('datos-body').addEventListener('click',ev=>{const b=ev.target.closest('button[data-id]');if(!b)return;const e=getE(+b.dataset.id);if(!e)return;ST.sel={kind:'el',id:e.id};refreshSel();});
 
+/* ---------- análisis RLC en serie (Serway, cap. 33): fórmulas del curso, no el solucionador ---------- */
+/* Una sola malla: cada unión toca exactamente dos elementos y el recorrido desde E[0] pasa por todos. */
+function isLoop(){if(E.length<2)return false;const d=new Map();for(const e of E)for(const v of [e.a,e.b])d.set(v,(d.get(v)||0)+1);
+  if([...d.values()].some(n=>n!==2))return false;
+  let e=E[0],v=e.b,n=1;while(v!==E[0].a){e=E.find(x=>x!==e&&(x.a===v||x.b===v));v=e.a===v?e.b:e.a;if(++n>E.length)return false;}return n===E.length;}
+const q=(s,sub)=>`<span class="m">${s}</span>`+(sub?`<sub>${sub}</sub>`:'');
+const kv=rows=>'<dl class="kv">'+rows.map(([k,f,v])=>`<dt>${k}${f?`<small> = ${f}</small>`:''}</dt><dd>${v}</dd>`).join('')+'</dl>';
+let rlcKey='';
+/* Primero el resultado en palabras, luego un indicador simple; las fórmulas quedan en «Ver cálculos» (cerrado). */
+const big=(t,s)=>`<p class="res-big">${t}<span>${s}</span></p>`;
+const meter=(pct,mark,lab)=>`<div class="cmp" role="img" aria-label="${lab}"><i style="width:${Math.min(100,Math.max(0,pct)).toFixed(1)}%"></i>${mark===null?'':`<b style="left:${mark}%"></b>`}</div>`;
+function updRLC(){const loop=isLoop(),acs=E.filter(e=>e.type==='ac'),cv=$('rlccv'),body=$('rlc-body'),calcBox=$('rlc-calc');
+  let R=0,L=0,iC=0;for(const e of E){if(e.type==='resistor'||e.type==='bulb')R+=e.R;else if(e.type==='battery')R+=e.r;else if(e.type==='inductor')L+=e.L;else if(e.type==='capacitor')iC+=1/e.C;}
+  const open=E.some(e=>e.type==='switch'&&!e.closed),bat=E.some(e=>e.type==='battery');
+  const key=[loop,R,L,iC,open,bat,acs.map(e=>e.Vm+':'+e.f),cv.clientWidth,COL['chart-bg']].join('|');if(key===rlcKey)return;rlcKey=key;
+  const C=1/iC,hasL=L>0,hasC=iC>0,ac=acs.length===1?acs[0]:null,wasOpen=!!(calcBox.querySelector('details')||{}).open;let msg='',h='',c='',plot=null;
+  const RLC=kv([[q('R'),'',eng(R,'Ω')],[q('L'),'',hasL?eng(L,'H'):'—'],[q('C'),'',hasC?eng(C,'F'):'—']]);
+  if(!E.length)msg='Arma R, L y C en serie, o elige un ejemplo RLC.';
+  else if(!loop)msg='El análisis aplica a una sola malla (todo en serie). Este circuito tiene ramas en paralelo o extremos sueltos.';
+  else if(acs.length>1)msg='Con más de una fuente CA no se aplican las fórmulas de un RLC en serie.';
+  else if(ac){const f=ac.f,Vm=ac.Vm,w=2*Math.PI*f,XL=w*L,XC=hasC?1/(w*C):0,Z=Math.hypot(R,XL-XC),phi=Math.atan2(XL-XC,R)*180/Math.PI,
+      Im=Vm/Z,Irms=Im*Math.SQRT1_2,Vrms=Vm*Math.SQRT1_2,cf=Math.cos(phi*Math.PI/180),res=Math.abs(phi)<0.05,lc=hasL&&hasC,w0=1/Math.sqrt(L*C),f0=w0/(2*Math.PI);
+    h+='<h3>Con fuente CA: reactancia e impedancia</h3>';
+    h+=res&&lc?big('Resonancia','La corriente es máxima: X<sub>L</sub> = X<sub>C</sub> y la tensión va en fase con la corriente.')
+      :res?big('Resistivo','La tensión y la corriente van en fase.')
+      :phi>0?big('Inductivo','Domina la bobina (X<sub>L</sub> &gt; X<sub>C</sub>): la tensión adelanta a la corriente.')
+      :big('Capacitivo','Domina el capacitor (X<sub>C</sub> &gt; X<sub>L</sub>): la tensión atrasa a la corriente.');
+    if(hasL||hasC){const m=Math.max(XL,XC);h+=(hasL?[['L',XL]]:[]).concat(hasC?[['C',XC]]:[]).map(([s,x])=>`<div class="cmp2"><span>${q('X',s)}</span>${meter(100*x/m,null,'X'+s+' = '+eng(x,'Ω'))}<span>${eng(x,'Ω')}</span></div>`).join('');}
+    if(lc&&!res)h+=`<p class="hint">Para la resonancia (corriente máxima) pon f = ${fmtHz(f0,4)}.</p>`;
+    if(open)h+='<p class="hint">El interruptor está abierto: los valores son para cuando se cierre.</p>';
+    if(bat)h+='<p class="hint">Solo la parte alterna; la pila no entra en estas fórmulas.</p>';
+    c=RLC+kv([[q('ω'),'2π'+q('f'),fmtInv(w,'rad/s')]].concat(hasL?[[q('X','L'),q('ωL'),eng(XL,'Ω')]]:[],hasC?[[q('X','C'),'1/('+q('ωC')+')',eng(XC,'Ω')]]:[],
+      [[q('Z'),'√('+q('R')+'² + ('+q('X','L')+' − '+q('X','C')+')²)',eng(Z,'Ω')],[q('φ'),'tan⁻¹(('+q('X','L')+' − '+q('X','C')+')/'+q('R')+')',fmtAng(phi)],
+       [q('I','máx'),'Δ'+q('V','máx')+'/'+q('Z'),eng(Im,'A')],[q('I','rms'),q('I','máx')+'/√2',eng(Irms,'A')],['Δ'+q('V','R'),q('I','máx')+'·'+q('R'),eng(Im*R,'V')]],
+      hasL?[['Δ'+q('V','L'),q('I','máx')+'·'+q('X','L'),eng(Im*XL,'V')]]:[],hasC?[['Δ'+q('V','C'),q('I','máx')+'·'+q('X','C'),eng(Im*XC,'V')]]:[]));
+    c+='<h4>Potencia</h4>'+kv([['Δ'+q('V','rms'),'Δ'+q('V','máx')+'/√2',eng(Vrms,'V')],['cos '+q('φ'),'factor de potencia',Number(cf.toFixed(3)).toString()],
+      [q('P','prom'),q('I','rms')+'·Δ'+q('V','rms')+'·cos '+q('φ'),eng(Irms*Vrms*cf,'W')],[q('P','prom'),q('I','rms')+'²·'+q('R'),eng(Irms*Irms*R,'W')]]);
+    if(lc){c+='<h4>Resonancia</h4>'+kv([[q('ω','0'),'1/√('+q('LC')+')',fmtInv(w0,'rad/s',4)],[q('f','0'),q('ω','0')+'/2π',fmtHz(f0,4)]]);plot={Vm,R,L,C,f,f0};}}
+  else if(hasL&&hasC){const Rc=2*Math.sqrt(L/C),a=R/(2*L),w0=1/Math.sqrt(L*C),crit=Math.abs(R-Rc)<=1e-3*Rc;
+    h+='<h3>Al encender (pila + interruptor): amortiguamiento</h3>';
+    h+=crit?big('Críticamente amortiguado','La corriente vuelve a cero lo más rápido posible, sin oscilar.')
+      :R>=Rc?big('Sobreamortiguado','La corriente sube y baja lentamente, sin oscilar.')
+      :R>0?big('Subamortiguado','La corriente oscila y se apaga poco a poco.'):big('Sin amortiguamiento','La corriente oscila sin apagarse, porque R = 0.');
+    /* escala lineal de 0 a 2·Rc: la marca de Rc queda en el centro */
+    const cap=`R = ${eng(R,'Ω')} ${crit?'=':R<Rc?'&lt;':'&gt;'} R<sub>c</sub> = ${eng(Rc,'Ω',4)}`;
+    h+=`<p class="cmp-cap">${cap}</p>`+meter(50*R/Rc,50,cap.replace(/<\/?sub>/g,'').replace('&lt;','<').replace('&gt;','>'))+'<div class="cmp-lab"><span>oscila</span><span>R<sub>c</sub></span><span>no oscila</span></div>';
+    if(!bat)h+='<p class="hint">Agrega una pila y un interruptor para verlo al encender.</p>';else if(open)h+='<p class="hint">Cierra el interruptor y mira la gráfica.</p>';
+    c=RLC+kv([[q('R','c'),'2√('+q('L')+'/'+q('C')+')',eng(Rc,'Ω',4)],[q('α'),q('R')+'/2'+q('L'),fmtInv(a,'s⁻¹')],[q('ω','0'),'1/√('+q('LC')+')',fmtInv(w0,'rad/s')]].concat(!crit&&R<Rc?[[q('ω','d'),'√('+q('ω','0')+'² − '+q('α')+'²)',fmtInv(Math.sqrt(w0*w0-a*a),'rad/s')]]:[]));}
+  else msg=bat?'Para ver el amortiguamiento, el circuito necesita R, L y C en serie.':'Agrega una bobina o un capacitor en serie, con una pila o una fuente CA.';
+  $('rlc-msg').textContent=msg;$('rlc-msg').hidden=!msg;body.innerHTML=h;cv.hidden=!plot;if(plot)drawRes(cv,plot);
+  calcBox.innerHTML=c?`<details class="calc"${wasOpen?' open':''}><summary>Ver cálculos</summary>${c}</details>`:'';}
+/* Irms vs f en escala logarítmica de f, de f0/10 a 10·f0 (o más, para que entre la f actual) */
+function drawRes(cv,{Vm,R,L,C,f,f0}){const W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return;const dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle=COL['chart-bg'];g.fillRect(0,0,W,H);
+  const I=x=>{const w=2*Math.PI*x;return Vm*Math.SQRT1_2/Math.hypot(R,w*L-1/(w*C));};
+  const lo=Math.min(f0/10,f/1.5),hi=Math.max(f0*10,f*1.5),pl=8,pr=8,pt=18,pb=18,X=x=>pl+(W-pl-pr)*Math.log(x/lo)/Math.log(hi/lo);
+  const xs=[];for(let k=0;k<=300;k++)xs.push(lo*Math.pow(hi/lo,k/300));xs.push(f0);xs.sort((a,b)=>a-b);
+  let ym=0;for(const x of xs){const y=I(x);if(isFinite(y))ym=Math.max(ym,y);}if(!(ym>0))return;
+  const Y=y=>H-pb-(H-pt-pb)*Math.min(1,y/ym);
+  g.strokeStyle=COL['chart-grid'];g.lineWidth=1;g.beginPath();g.moveTo(pl,H-pb+.5);g.lineTo(W-pr,H-pb+.5);g.stroke();
+  g.setLineDash([4,4]);g.strokeStyle=COL['chart-text'];g.beginPath();g.moveTo(X(f0),pt);g.lineTo(X(f0),H-pb);g.stroke();g.setLineDash([]);
+  g.strokeStyle=COL['tr-i'];g.lineWidth=2;g.beginPath();xs.forEach((x,k)=>{const y=I(x);k?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));});g.stroke();
+  g.fillStyle=COL['tr-i'];g.beginPath();g.arc(X(f),Y(I(f)),4.5,0,2*Math.PI);g.fill();
+  g.fillStyle=COL['chart-text'];g.font='500 11.5px "Source Sans 3", sans-serif';g.textBaseline='top';g.textAlign='left';g.fillText('Irms (máx. '+eng(ym,'A')+')',pl,3);
+  g.textBaseline='bottom';g.fillText(fmtHz(lo),pl,H-2);g.textAlign='right';g.fillText(fmtHz(hi)+' · f (log)',W-pr,H-2);
+  g.textAlign='center';g.fillText('f₀',X(f0),H-2);}
+
 /* ---------- ejemplos ---------- */
 function clearAll(){Vx=new Map();E=[];counters={};nid=1;ST.sel=null;ST.chart.id=null;ST.chart.data=[];ST.t=0;ST.acc=0;METERS.clear();dirty();refreshSel();}
 function loop(pts,specs){const vs=pts.map(p=>addV(p[0],p[1]));return {vs,els:specs.map((s,k)=>s?addE(s[0],vs[k].id,vs[(k+1)%vs.length].id,s[1]):null)};}
@@ -951,6 +1050,9 @@ const EX={
   rlc_ac:['RLC serie en CA (resonancia)',()=>{const L=loop([[140,380],[140,180],[400,180],[660,180],[660,380],[400,380]],
       [['ac',{Vm:10,f:1/(2*Math.PI*Math.sqrt(0.1))}],['resistor',{R:5}],['inductor',{L:1}],['capacitor',{C:0.1}],['wire'],['wire']]);
     ST.vm.on=false;$('o-vm').checked=false;ST.chart={on:true,id:L.els[0].id,data:[]};return 'La fuente está en f₀: v e i quedan en fase. Cambia la frecuencia para ver el desfase.';}],
+  serway:['RLC serie: Ejemplo 33.4 (Serway)',()=>{const L=loop([[140,380],[140,180],[400,180],[660,180],[660,380],[400,380]],
+      [['ac',{Vm:150,f:60}],['resistor',{R:425}],['inductor',{L:1.25}],['capacitor',{C:3.5e-6}],['wire'],['wire']]);
+    ST.vm.on=false;$('o-vm').checked=false;ST.chart={on:true,id:L.els[0].id,data:[]};return 'Ejemplo 33.4: compara X_L, X_C, Z, φ, ΔV y P_prom en «Análisis RLC en serie» del panel lateral.';}],
   parallel:['Focos en paralelo',()=>{const vs=[[140,380],[140,180],[330,180],[500,180],[680,180],[680,380],[500,380]].map(p=>addV(p[0],p[1]));
       const add=(t,a,b,p)=>addE(t,vs[a].id,vs[b].id,p);add('battery',0,1,{V:9});add('ammeter',1,2);add('wire',2,3);add('wire',3,4);add('bulb',4,5,{R:10});add('wire',5,6);add('bulb',3,6,{R:20});add('wire',6,0);
       ST.vm.on=false;$('o-vm').checked=false;ST.chart={on:false,id:null,data:[]};return 'El amperímetro mide la corriente total. El foco de menor resistencia brilla más.';}],
@@ -963,7 +1065,7 @@ function loadExample(k){Vx=new Map();E=[];counters={};nid=1;ST.sel=null;ST.t=0;S
 /* Huella del circuito para saber si el estudiante lo cambió desde el último ejemplo */
 let exSig=null;
 const circuitSig=()=>JSON.stringify(E.map(e=>[e.type,e.a,e.b,e.V,e.r,e.Vm,e.f,e.R,e.C,e.L,e.closed]))+JSON.stringify([...Vx.values()].map(v=>[Math.round(v.x),Math.round(v.y)]));
-const EXG=[['Corriente alterna',['r_ac','l_ac','c_ac','rlc_ac']],['Corriente continua',['c_dc','rlc_dc','rc','rl','parallel','divider']]];
+const EXG=[['Corriente alterna',['r_ac','l_ac','c_ac','rlc_ac','serway']],['Corriente continua',['c_dc','rlc_dc','rc','rl','parallel','divider']]];
 function buildExamples(){const box=$('examples');for(const [g,ks] of EXG){const h=document.createElement('h3');h.textContent=g;box.appendChild(h);
   for(const k of ks){const b=document.createElement('button');b.type='button';b.textContent=EX[k][0];
     b.onclick=()=>{if(E.length&&circuitSig()!==exSig&&!window.confirm('Cargar «'+EX[k][0]+'» reemplaza el circuito que tienes en la mesa. ¿Continuar?'))return;loadExample(k);};box.appendChild(b);}}}
@@ -1016,7 +1118,7 @@ function frame(now){const rdt=Math.min(0.05,(now-last)/1000);last=now;
     if(n>maxN){n=maxN;ST.acc=0;}else ST.acc-=n*ST.dt;advance(n);
     for(const e of E)e.anim+=speedOf(e.i)*rdt;
     if(now-warnT>4000&&E.some(e=>TYPES[e.type].src&&Math.abs(e.i)>40)){warnT=now;toast('Corriente muy alta: hay un cortocircuito en una fuente.',true);}}
-  draw();updDatos();updLive(); // mismo cuadro que los instrumentos dibujados en la mesa
+  draw();updDatos();updLive();updRLC(); // mismo cuadro que los instrumentos dibujados en la mesa
   if(now-liveT>120){const eff=ST.running&&E.length?(ST.t-liveSim)/((now-liveT)/1000):ST.speed;liveT=now;liveSim=ST.t;drawChart();
     $('tclock').textContent='t = '+eng(ST.t,'s',4)+(eff>=0&&eff<0.8*ST.speed?' (×'+Number(eff.toPrecision(2))+')':'');}
   requestAnimationFrame(frame);}
