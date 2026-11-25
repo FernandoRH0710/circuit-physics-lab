@@ -166,6 +166,15 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
 .kv dt small{color:var(--muted);font-size:12.5px}
 .kv dd{margin:0;text-align:right;font-weight:600;white-space:nowrap}
 #rlccv{display:block;width:100%;height:150px;margin-top:6px;border:1px solid var(--line)}
+/* mediciones registradas */
+.mt-wrap{overflow:auto;max-height:260px;border:1px solid var(--line);margin:4px 0 8px}
+.mt{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mt th,.mt td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:right}
+.mt thead th{position:sticky;top:0;background:var(--panel);font-weight:600;border-bottom:1.5px solid var(--ink)}
+.mt td:last-child{text-align:left}
+.mt input{font:inherit;width:120px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink)}
+.btn.sm{height:30px;padding:0 10px;font-size:13px}
+.ch-head .row{flex-wrap:nowrap;flex-shrink:0}
 
 /* datos del circuito: la firma, el resaltador une la mesa con su fila */
 .datos{display:flex;flex-direction:column;gap:6px}
@@ -207,7 +216,13 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
 .modal-c{background:var(--panel);color:var(--ink);border-top:2px solid var(--ink);max-width:580px;width:100%;max-height:100%;overflow:auto;padding:10px 20px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
 .modal-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .modal-c h2{margin:0;font-size:22px;font-weight:700}
-.modal-c ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.modal-c ul,.modal-c ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+.modal-c h3{margin:6px 0 0;font-size:17px;font-weight:700}
+.modal-c p{margin:0}
+.modal-c pre,#imp-txt,#cp-txt{font:13px/1.4 Consolas,"Courier New",monospace;background:var(--panel-2);color:var(--ink);border:1px solid var(--line);padding:8px 10px;margin:0;overflow:auto;flex-shrink:0}
+#imp-txt,#cp-txt{width:100%;min-height:220px;resize:vertical;box-sizing:border-box}
+.btn.big{height:48px;font-size:16px}
+.err{color:var(--danger);font-weight:600}
 
 @media (max-width:820px){
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
@@ -244,7 +259,9 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
   .brand span{display:none}
   .bar-r{flex:1 1 auto;justify-content:flex-end}
   #tclock{min-width:0;font-size:13px;margin-right:auto}
-  #b-opts{white-space:nowrap}
+  #b-opts,#b-ia{white-space:nowrap}
+  .bar-r .btn{padding:0 10px}
+  .no-m{display:none}
   #chcv{height:120px}
   .btn,.icon-btn,.zoom button,.x,select{min-height:44px}
   .icon-btn,.zoom button,.x{min-width:44px}
@@ -284,7 +301,7 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
         <button type="button" role="tab" data-tab="edit" aria-selected="false">Componente</button>
       </div>
       <div id="chart" class="chartp" hidden>
-        <div class="ch-head"><span id="ch-title">Gráfica</span><button class="x" id="ch-close" aria-label="Cerrar gráfica"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+        <div class="ch-head"><span id="ch-title">Gráfica</span><span class="row"><button class="btn sm" id="ch-csv">Exportar datos (CSV)</button><button class="x" id="ch-close" aria-label="Cerrar gráfica"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></div>
         <canvas id="chcv"></canvas>
         <div class="ch-leg"><span><i class="dash" style="--c:var(--tr-v)"></i><span class="m">v</span>(<span class="m">t</span>)</span><span><i style="--c:var(--tr-i)"></i><span class="m">i</span>(<span class="m">t</span>)</span></div>
         <div class="ch-meas" id="ch-meas" hidden></div>
@@ -321,6 +338,15 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
       <p class="hint">Para graficar, toca un componente y pulsa Graficar. El amperímetro está en la caja de componentes.</p>
     </section>
     <section class="sec">
+      <h2>Mediciones</h2>
+      <button class="btn acc" id="m-add">Registrar medición</button>
+      <p class="hint">Guarda t, la lectura del voltímetro y la de cada amperímetro, en el modo de lectura elegido arriba.</p>
+      <details class="calc" id="m-box"><summary id="m-sum">Tabla de mediciones (0)</summary>
+        <div class="mt-wrap"><table class="mt" id="m-table"></table></div>
+        <div class="row"><button class="btn" id="m-copy">Copiar tabla</button><button class="btn" id="m-csv">Descargar CSV</button><button class="btn danger" id="m-clr">Borrar tabla</button></div>
+      </details>
+    </section>
+    <section class="sec">
       <h2>Simulación</h2>
       <div class="row"><button class="btn acc" id="b-play">Pausar</button><button class="btn" id="b-step">Paso</button><button class="btn" id="b-reset">t = 0</button></div>
       <label for="o-speed" class="hint">Velocidad del tiempo</label>
@@ -346,6 +372,13 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
       <div class="ex" id="examples"></div>
       <div class="row"><button class="btn" id="b-help">Cómo se usa</button><button class="btn danger" id="b-clear">Borrar todo</button></div>
     </section>
+    <section class="sec">
+      <h2>Usar con tu IA</h2>
+      <button class="btn acc" id="b-res">Copiar resultados para IA</button>
+      <p class="hint">Copia el circuito, t, el modo, V, I y P de cada componente, los instrumentos y la tabla de mediciones, listos para pegar en el chat de tu IA.</p>
+      <div class="row"><button class="btn" id="b-exp">Exportar circuito</button><button class="btn" id="b-imp">Importar circuito</button></div>
+      <p class="hint">Exportar copia el circuito como texto JSON. Importar arma en la mesa un circuito pegado, o el link que te dio tu IA; el formato está en «Cómo se usa».</p>
+    </section>
   </aside>
 
   <footer class="bar">
@@ -354,6 +387,7 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
       <span id="tclock" class="mono">t = 0 s</span>
       <button class="icon-btn" id="b-play2" aria-label="Pausar o reanudar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12" stroke-width="3"/></svg></button>
       <button class="btn only-m" id="b-opts" aria-controls="side" aria-expanded="false">Panel lateral</button>
+      <button class="btn" id="b-ia" aria-haspopup="dialog" aria-label="Usar con tu IA"><span class="no-m">Usar con tu IA</span><span class="only-m">IA</span></button>
       <button class="icon-btn" id="b-help2" aria-label="Ayuda"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.3c-.8.4-1.2.9-1.2 1.7v.4"/><path d="M12 17.2v.1" stroke-width="2.6"/></svg></button>
     </div>
   </footer>
@@ -378,8 +412,54 @@ select{font:500 14px var(--f-body);height:40px;padding:0 10px;border:1px solid v
       <li><b>Diagrama fasorial:</b> en CA, toca una resistencia, un foco, una bobina, un capacitor o la fuente para ver U, I y su desfase.</li>
       <li><b>Mover la vista:</b> arrastra el fondo; acerca o aleja con la rueda del mouse o los botones + y −.</li>
       <li>La pila es ideal si su resistencia interna es 0. La fuente CA entrega v(t) = V<sub>m</sub> sen(2πft).</li>
+      <li><b>Mediciones:</b> en el panel lateral, «Registrar medición» guarda t y las lecturas del voltímetro y los amperímetros. La tabla se copia a Excel o se descarga en CSV. En la gráfica, «Exportar datos (CSV)» baja todos sus puntos t, v(t), i(t).</li>
     </ul>
+    <h3>Control por IA</h3>
+    <p>Un circuito se describe en JSON con nodos con nombre: cada componente va del nodo <b>desde</b> al nodo <b>hasta</b>, y se acomoda solo en la mesa. Pégalo con «Importar circuito», ábrelo con un link que termine en <code>#circuito=</code> y el JSON, o pásalo a <code>CPL.loadJSON(json)</code> en la consola. El botón «Usar con tu IA», abajo, explica cómo hacerlo con cualquier chat.</p>
+    <p><b>Tipos y valores (SI, o con prefijo como "10m", "2.2u"):</b> ac (Vm, f), battery (V, r), resistor (R), bulb (R), capacitor (C), inductor (L), switch (closed), ammeter, wire. En las fuentes, «hasta» es el borne +. «nombre» es opcional.</p>
+    <pre>{"componentes": [
+  {"tipo": "ac", "nombre": "V1", "valores": {"Vm": 10, "f": 50},
+   "desde": "g", "hasta": "a"},
+  {"tipo": "resistor", "nombre": "R1", "valores": {"R": 100},
+   "desde": "a", "hasta": "g"}
+]}</pre>
+    <p>Una IA también puede usar <code>window.CPL</code>: clear(), add(tipo, valores, desde, hasta), connect(nodo1, nodo2), setValue("R1", 220), toggleSwitch("S1"), read() (v e i de cada componente; i va de «desde» a «hasta»), loadJSON(json) y exportJSON().</p>
     <button class="btn acc" id="help-ok" style="align-self:flex-end">Entendido</button>
+  </div>
+</div>
+
+<div id="imp" class="modal" hidden>
+  <div class="modal-c" role="dialog" aria-modal="true" aria-labelledby="imp-t">
+    <div class="modal-h"><h2 id="imp-t">Importar circuito</h2><button class="x" id="imp-x" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <label for="imp-txt" class="hint">Pega aquí el JSON del circuito o el link completo que te dio tu IA. El formato está en «Cómo se usa», sección Control por IA.</label>
+    <textarea id="imp-txt" spellcheck="false"></textarea>
+    <p class="err" id="imp-err" role="alert" hidden></p>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="imp-no">Cancelar</button><button class="btn acc" id="imp-ok">Armar circuito</button></div>
+  </div>
+</div>
+
+<div id="ia" class="modal" hidden>
+  <div class="modal-c" role="dialog" aria-modal="true" aria-labelledby="ia-t">
+    <div class="modal-h"><h2 id="ia-t">Usa tu IA con el simulador (gratis)</h2><button class="x" id="ia-x" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <ol>
+      <li>Pulsa «Copiar prompt» y pégalo en el chat de tu IA (ChatGPT, Gemini, Claude, Copilot, DeepSeek…).</li>
+      <li>Escribe lo que quieres hacer, por ejemplo: «Arma un RC con R = 1 kΩ, C = 1 mF y 12 V».</li>
+      <li>Tu IA te dará un link: ábrelo y el circuito aparece armado. Si el link no funciona, copia el JSON que te dio y pégalo en «Importar circuito», en el panel lateral.</li>
+      <li>Simula: cierra interruptores, deja correr el tiempo y registra mediciones si hace falta.</li>
+      <li>Pulsa «Copiar resultados para IA», en el panel lateral, y pégalo en tu chat. Tu IA analizará los datos.</li>
+      <li>Repite: pídele cambios («ahora con R = 2 kΩ») y vuelve al paso 3.</li>
+    </ol>
+    <button class="btn acc big" id="ia-copy">Copiar prompt</button>
+    <p class="hint">Funciona con cualquier IA gratuita. Para que la IA maneje el simulador sola, existe la extensión Claude in Chrome (requiere plan de pago).</p>
+  </div>
+</div>
+
+<div id="cp" class="modal" hidden>
+  <div class="modal-c" role="dialog" aria-modal="true" aria-labelledby="cp-t">
+    <div class="modal-h"><h2 id="cp-t">Copia este texto</h2><button class="x" id="cp-x" aria-label="Cerrar"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <label for="cp-txt" class="hint">No se pudo copiar solo. Selecciona todo el texto (Ctrl+A, o mantén presionado en el celular), cópialo y pégalo en tu chat.</label>
+    <textarea id="cp-txt" readonly spellcheck="false"></textarea>
+    <div class="row" style="justify-content:flex-end"><button class="btn acc" id="cp-ok">Listo</button></div>
   </div>
 </div>
 
@@ -830,9 +910,9 @@ $('zin').onclick=()=>setZoom(ST.cam.z*1.2,CW/2,CH/2);
 $('zout').onclick=()=>setZoom(ST.cam.z/1.2,CW/2,CH/2);
 $('zfit').onclick=()=>fitView();
 $('cutbtn').onclick=()=>{if(ST.sel&&ST.sel.kind==='vert')cut(ST.sel.id);};
-window.addEventListener('keydown',ev=>{const tag=(document.activeElement&&document.activeElement.tagName)||'';if(tag==='INPUT'||tag==='SELECT')return;
+window.addEventListener('keydown',ev=>{const tag=(document.activeElement&&document.activeElement.tagName)||'';if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA')return;
   if((ev.key==='Delete'||ev.key==='Backspace')&&ST.sel&&ST.sel.kind==='el'){ev.preventDefault();deleteEl(getE(ST.sel.id));}
-  if(ev.key==='Escape'){ST.sel=null;refreshSel();$('help').hidden=true;}
+  if(ev.key==='Escape'){ST.sel=null;refreshSel();$('help').hidden=true;$('imp').hidden=true;$('ia').hidden=true;$('cp').hidden=true;}
   if(ev.key===' '){ev.preventDefault();togglePlay();}});
 
 /* caja de componentes */
@@ -1093,10 +1173,206 @@ $('b-opts').onclick=()=>{$('side').classList.add('open');$('b-opts').setAttribut
 $('side-close').onclick=()=>{$('side').classList.remove('open');$('b-opts').setAttribute('aria-expanded','false');$('b-opts').focus();};
 let toastT=0;function toast(msg,warn){const t=$('toast');t.textContent=msg;t.className='toast'+(warn?' warn':'');t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},warn?3000:5500);}
 
+/* ---------- extracción de datos: CSV con ";" y coma decimal (Excel en español) ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const csvNum=(x,p)=>x===null||x===undefined||!isFinite(x)?'':Number(x.toPrecision(p||6)).toString().replace('.',',');
+const csvCell=c=>/[";\r\n]/.test(c=String(c))?'"'+c.replace(/"/g,'""')+'"':c;
+const toCSV=rows=>rows.map(r=>r.map(csvCell).join(';')).join('\r\n');
+function download(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+text],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+async function copyText(s){try{await navigator.clipboard.writeText(s);return true;}
+  catch(err){const ta=document.createElement('textarea');ta.value=s;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(e2){}ta.remove();return ok;}}
+const MED=[];
+const medCols=()=>{const c=[];for(const r of MED)for(const k in r.A)if(!c.includes(k))c.push(k);return c;};
+function medRows(){const am=medCols();return [['N°','t (s)','Lectura','V (V)',...am.map(k=>k+' (A)'),'Nota'],...MED.map((r,k)=>[k+1,csvNum(r.t,9),r.modo,csvNum(r.V),...am.map(a=>csvNum(r.A[a])),r.nota])];}
+function medRender(){const am=medCols();$('m-sum').textContent='Tabla de mediciones ('+MED.length+')';
+  $('m-table').innerHTML=!MED.length?'<tbody><tr><td class="hint">Aún no hay mediciones.</td></tr></tbody>':
+    `<thead><tr><th>N°</th><th>t</th><th>Lectura</th><th>V</th>${am.map(a=>`<th>${esc(a)}</th>`).join('')}<th>Nota</th></tr></thead><tbody>`+
+    MED.map((r,k)=>`<tr><td>${k+1}</td><td>${eng(r.t,'s',4)}</td><td>${r.modo}</td><td>${eng(r.V,'V',4)}</td>${am.map(a=>`<td>${eng(r.A[a],'A',4)}</td>`).join('')}<td><input data-k="${k}" aria-label="Nota de la medición ${k+1}" value="${esc(r.nota)}"></td></tr>`).join('')+'</tbody>';}
+$('m-table').addEventListener('input',ev=>{const k=ev.target.dataset.k;if(k!==undefined)MED[+k].nota=ev.target.value;});
+$('m-add').onclick=()=>{const A={};for(const e of E)if(e.type==='ammeter')A[e.label]=meterVal(e.id,e.i);
+  if(!ST.vm.on&&!Object.keys(A).length)return toast('Activa el voltímetro o agrega un amperímetro para registrar lecturas.',true);
+  const r=ST.vm.on?vmReading():null;
+  MED.push({t:ST.t,modo:{inst:'inst.',rms:'rms',max:'máx'}[ST.mode],V:r===null?null:meterVal('vm',r),A,nota:''});
+  medRender();$('m-box').open=true;toast('Medición '+MED.length+' registrada.');};
+const medTSV=()=>medRows().map(r=>r.map(c=>String(c).replace(/[\t\r\n]+/g,' ')).join('\t')).join('\r\n');
+$('m-copy').onclick=async()=>{if(!MED.length)return toast('La tabla está vacía.',true);
+  const ok=await copyText(medTSV());
+  toast(ok?'Tabla copiada. Pégala en Excel.':'No se pudo copiar la tabla.',!ok);};
+$('m-csv').onclick=()=>{if(!MED.length)return toast('La tabla está vacía.',true);download('mediciones.csv',toCSV(medRows()));};
+$('m-clr').onclick=()=>{if(MED.length&&window.confirm('¿Borrar las '+MED.length+' mediciones de la tabla?')){MED.length=0;medRender();}};
+$('ch-csv').onclick=()=>{const e=ST.chart.id?getE(ST.chart.id):null,d=ST.chart.data;if(!e||d.length<2)return toast('Aún no hay datos en la gráfica.',true);
+  download('grafica-'+e.label+'.csv',toCSV([['t (s)','v(t) (V)','i(t) (A)'],...d.map(r=>[csvNum(r[0],9),csvNum(r[1]),csvNum(r[2])])]));};
+medRender();
+
+/* ---------- control por IA: window.CPL y circuitos en JSON ---------- */
+/* Formato: {"componentes":[{"tipo","nombre"?,"valores"?,"desde","hasta"}],"posiciones"?:{nodo:[x,y]}}. En fuentes, "hasta" es el borne +. */
+const norm=s=>String(s==null?'':s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim();
+const ALIAS={};for(const k in TYPES){ALIAS[k]=k;ALIAS[norm(TYPES[k].name)]=k;}
+let VNAME=new Map();  /* vértice → nombre de nodo del último JSON cargado */
+const nodeKey=v=>(typeof v==='string'&&v.trim())||(typeof v==='number'&&isFinite(v))?String(v).trim():null;
+function checkVals(type,vals,pre){if(typeof vals!=='object'||vals===null||Array.isArray(vals))throw new Error(pre+'"valores" debe ser un objeto, por ejemplo {"R": 100}.');
+  const out={},ps=TYPES[type].params||[];
+  for(const k in vals){if(type==='switch'&&k==='closed'){out.closed=!!vals[k];continue;}
+    const p=ps.find(q=>q.k===k);if(!p)throw new Error(pre+'«'+k+'» no es un valor de '+TYPES[type].name+'. Usa: '+(type==='switch'?'closed':ps.map(q=>q.k).join(', ')||'ninguno')+'.');
+    const x=typeof vals[k]==='number'?vals[k]:parseEng(vals[k]);
+    if(!(x>=p.min&&x<=p.max))throw new Error(pre+k+' debe estar entre '+eng(p.min,p.u)+' y '+eng(p.max,p.u)+'.');out[k]=x;}
+  return out;}
+function checkSpec(s){if(typeof s==='string'){try{s=JSON.parse(s);}catch(err){throw new Error('El texto no es un JSON válido: '+err.message);}}
+  const cs=s&&s.componentes;if(!Array.isArray(cs)||!cs.length)throw new Error('Falta la lista "componentes" (al menos un componente).');
+  if(cs.length>80)throw new Error('Demasiados componentes (máximo 80).');
+  const used=new Set();
+  return {pos:s.posiciones&&typeof s.posiciones==='object'?s.posiciones:null,cs:cs.map((c,k)=>{c=c||{};
+    const who=[c.nombre,c.tipo].filter(x=>x!=null&&x!=='').join(', '),pre='Componente '+(k+1)+(who?' ('+who+')':'')+': ';
+    const type=ALIAS[norm(c.tipo)];if(!type)throw new Error(pre+'tipo «'+c.tipo+'» desconocido. Usa: '+Object.keys(TYPES).join(', ')+'.');
+    const a=nodeKey(c.desde),b=nodeKey(c.hasta);if(a===null||b===null)throw new Error(pre+'faltan los nodos "desde" y "hasta".');
+    if(a===b)throw new Error(pre+'"desde" y "hasta" son el mismo nodo.');
+    const label=c.nombre==null?null:String(c.nombre);
+    if(label!==null&&!/^[\p{L}\p{N}_.\-]{1,12}$/u.test(label))throw new Error(pre+'el nombre debe tener de 1 a 12 letras o números, sin espacios.');
+    if(label!==null&&used.has(label))throw new Error(pre+'el nombre «'+label+'» está repetido.');if(label!==null)used.add(label);
+    return {type,label,a,b,props:checkVals(type,c.valores==null?{}:c.valores,pre)};})};}
+/* Acomodo: el borne − de la fuente es un riel abajo; los demás nodos van en una fila arriba, en el orden del recorrido.
+   Cada rama al riel es un peldaño vertical; entre nodos de arriba, recto si son vecinos o en un puente por encima.
+   Una malla queda como rectángulo con la fuente a la izquierda y el borne + arriba.
+   shortcut: varias ramas repetidas en la misma columna pueden encimarse; para un dibujo exacto, usar "posiciones" en el JSON. */
+function build(s){const nodes=[...new Set(s.cs.flatMap(c=>[c.a,c.b]))],P=new Map(),els=[];
+  const mk=(type,A,B,c)=>addE(type,A.id,B.id,c?Object.assign({},c.props,c.label?{label:c.label}:{}):{auto:true});  /* auto: cable del acomodo, no se exporta */
+  const bridge=(c,A,B,dx,dy)=>{const P1=addV(A.x+dx,A.y+dy),P2=addV(B.x+dx,B.y+dy);mk('wire',A,P1);els.push(mk(c.type,P1,P2,c));mk('wire',P2,B);};
+  if(s.pos&&nodes.every(n=>Array.isArray(s.pos[n])&&s.pos[n].length===2&&s.pos[n].every(x=>typeof x==='number'&&isFinite(x)))){
+    for(const n of nodes)P.set(n,addV(s.pos[n][0],s.pos[n][1]));for(const c of s.cs)els.push(mk(c.type,P.get(c.a),P.get(c.b),c));}
+  else{const src=s.cs.find(c=>TYPES[c.type].src),deg=new Map(),adj=new Map(nodes.map(n=>[n,[]]));
+    for(const c of s.cs){adj.get(c.a).push(c.b);adj.get(c.b).push(c.a);for(const n of [c.a,c.b])deg.set(n,(deg.get(n)||0)+1);}
+    const g=src?src.a:[...deg].sort((x,y)=>y[1]-x[1])[0][0],top=[],seen=new Set([g]);
+    const visit=n=>{if(seen.has(n))return;seen.add(n);top.push(n);for(const m of adj.get(n))visit(m);};
+    if(src)visit(src.b);for(const n of nodes)visit(n);
+    const S=220,X0=160,YT=160,YB=400,rail=new Map(),colN=new Map(),pairs=new Set();let up=0;
+    const railPt=x=>{if(!rail.has(x))rail.set(x,addV(x,YB));return rail.get(x);};
+    top.forEach((n,k)=>P.set(n,addV(X0+k*S,YT)));
+    for(const c of s.cs){
+      if(c.a===g||c.b===g){const X=P.get(c.a===g?c.b:c.a),R=railPt(X.x),A=c.a===g?R:X,B=c.a===g?X:R,k=colN.get(X.x)||0;colN.set(X.x,k+1);
+        if(!k)els.push(mk(c.type,A,B,c));else bridge(c,A,B,(X.x===X0?-1:1)*(k%2?1:-1)*Math.ceil(k/2)*90,0);}
+      else{const A=P.get(c.a),B=P.get(c.b),key=JSON.stringify([c.a,c.b].sort());
+        if(Math.abs(top.indexOf(c.a)-top.indexOf(c.b))===1&&!pairs.has(key)){pairs.add(key);els.push(mk(c.type,A,B,c));}
+        else bridge(c,A,B,0,-90*(++up));}}
+    const rs=[...rail.values()].sort((p,q)=>p.x-q.x);for(let k=1;k<rs.length;k++)mk('wire',rs[k-1],rs[k]);P.set(g,rs[0]);}
+  VNAME=new Map([...P].map(([n,v])=>[v.id,n]));return els;}
+function loadJSON(json){const s=checkSpec(json);  /* valida todo antes de tocar la mesa */
+  Vx=new Map();E=[];counters={};nid=1;ST.sel=null;ST.chart={on:false,id:null,data:[]};$('o-chart').checked=false;ST.t=0;ST.acc=0;METERS.clear();
+  for(const c of s.cs){const m=c.label&&c.label.match(/^(\D+)(\d+)$/);if(m&&m[1]===TYPES[c.type].pre)counters[c.type]=Math.max(counters[c.type]||0,+m[2]);}
+  const els=build(s);dirty();refreshSel();drawChart();syncSheet();fitView();exSig=circuitSig();return els;}
+function valsOf(e){const o={};if(e.type==='switch')o.closed=!!e.closed;for(const p of TYPES[e.type].params||[])o[p.k]=+e[p.k].toPrecision(12);return o;}  /* 10u da 9.999…e-6 en coma flotante */
+/* Los cables auto unen vértices del mismo nodo; con ellos no se exportan posiciones (al importar se repite el mismo acomodo). */
+function exportSpec(){const par=new Map(),find=v=>{while(par.has(v))v=par.get(v);return v;};
+  for(const e of E)if(e.auto){const ra=find(e.a),rb=find(e.b);if(ra!==rb)par.set(ra,rb);}
+  const names=new Map(),taken=new Set();for(const [v,n] of VNAME)if(Vx.has(v)&&!names.has(find(v))&&!taken.has(n)){names.set(find(v),n);taken.add(n);}
+  let k=0;const nn=v=>{v=find(v);if(!names.has(v)){let n;do n='n'+(++k);while(taken.has(n));taken.add(n);names.set(v,n);}return names.get(v);};
+  const componentes=E.filter(e=>!e.auto).map(e=>{const c={tipo:e.type,nombre:e.label,desde:nn(e.a),hasta:nn(e.b)},v=valsOf(e);if(Object.keys(v).length)c.valores=v;return c;});
+  if(E.some(e=>e.auto))return {componentes};
+  const posiciones={};for(const [v,n] of names){const p=Vx.get(v);posiciones[n]=[Math.round(p.x),Math.round(p.y)];}
+  return {componentes,posiciones};}
+const findE=n=>{const e=E.find(x=>x.label===String(n));if(!e)throw new Error('No hay ningún componente llamado «'+n+'».');return e;};
+window.CPL={
+  clear(){clearAll();VNAME=new Map();ST.vm.on=false;$('o-vm').checked=false;return true;},
+  /* add y connect rearman el circuito con el acomodo automático (t vuelve a 0); usa los nodos que da exportJSON() */
+  add(tipo,valores,desde,hasta){const s=exportSpec();delete s.posiciones;s.componentes.push({tipo,valores,desde,hasta});const els=loadJSON(s);return els[els.length-1].label;},
+  connect(desde,hasta){return window.CPL.add('wire',null,desde,hasta);},
+  setValue(nombre,valores){const e=findE(nombre),ps=TYPES[e.type].params;
+    if(typeof valores!=='object'||valores===null){if(!ps)throw new Error(TYPES[e.type].name+' no tiene valores que cambiar.');valores={[ps[0].k]:valores};}
+    const was=e.closed;Object.assign(e,checkVals(e.type,valores,nombre+': '));if(e.closed!==was)dirty();else{recomputeDt();step(ST.dt,false);scheduleSave();}refreshSel();return valsOf(e);},
+  toggleSwitch(nombre,cerrado){const e=findE(nombre);if(e.type!=='switch')throw new Error('«'+nombre+'» no es un interruptor.');e.closed=cerrado===undefined?!e.closed:!!cerrado;dirty();refreshSel();return e.closed;},
+  read(){const srcs=E.filter(x=>x.type==='ac'),s=srcs.length&&srcs.every(x=>x.f===srcs[0].f)&&nodeIds.length?acSolve(srcs[0].f):null,r=ST.vm.on?vmReading():null;
+    return {t:ST.t,voltimetro:r!==null&&isFinite(r)?r:null,componentes:E.filter(e=>!e.auto).map(e=>{const o={nombre:e.label,tipo:e.type,v:TYPES[e.type].src?-e.v:e.v,i:e.i};
+      const p=s&&e.type!=='battery'&&idx.has(e.a)&&idx.has(e.b)?acPhasor(e,s):null;if(p){o.Umax=p.U;o.Imax=p.I;o.fase=p.phi;}return o;})};},
+  loadJSON(json){return loadJSON(json).length;},
+  exportJSON(){return JSON.stringify(exportSpec(),null,2);}
+};
+$('b-exp').onclick=async()=>{if(!E.length)return toast('La mesa está vacía.',true);const ok=await copyText(window.CPL.exportJSON());toast(ok?'Circuito copiado como JSON.':'No se pudo copiar el circuito.',!ok);};
+const closeImp=()=>{$('imp').hidden=true;$('b-imp').focus();};
+$('b-imp').onclick=()=>{$('imp-err').hidden=true;$('imp').hidden=false;$('imp-txt').focus();};
+$('imp-x').onclick=$('imp-no').onclick=closeImp;
+$('imp-ok').onclick=()=>{const txt=linkJSON($('imp-txt').value);
+  try{checkSpec(txt);}catch(err){$('imp-err').textContent=err.message;$('imp-err').hidden=false;return;}
+  if(E.length&&circuitSig()!==exSig&&!window.confirm('Importar reemplaza el circuito que tienes en la mesa. ¿Continuar?'))return;
+  const n=window.CPL.loadJSON(txt);$('imp').hidden=true;toast('Circuito importado: '+n+' componentes.');};
+
+/* ---------- usar con tu IA (copiar y pegar): links #circuito=, resultados y prompt ---------- */
+const SITE='https://fernandorh0710.github.io/circuit-physics-lab/';
+/* Acepta el JSON, el link completo o solo el hash, codificado o no; los chats parten los links largos en varias líneas. */
+function linkJSON(t){t=String(t);const m=t.match(/#circuito=([\s\S]*)/);if(m)t=m[1].replace(/\s+/g,'');
+  try{t=decodeURIComponent(t);}catch(err){}
+  const a=t.indexOf('{'),b=t.lastIndexOf('}');return a>=0&&b>a?t.slice(a,b+1):t;}  /* quita ``` o ) que la IA deje alrededor */
+function openLink(ask){if(!/^#circuito=/.test(location.hash))return;const txt=linkJSON(location.hash);
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(err){}  /* al recargar vuelve lo guardado, no el link */
+  try{checkSpec(txt);}catch(err){$('imp-txt').value=txt;$('imp-err').textContent='El link del circuito tiene un error. '+err.message;$('imp-err').hidden=false;$('imp').hidden=false;return;}
+  if(ask&&E.length&&circuitSig()!==exSig&&!window.confirm('El link reemplaza el circuito que tienes en la mesa. ¿Continuar?'))return;
+  toast('Circuito del link armado: '+window.CPL.loadJSON(txt)+' componentes.');}
+window.addEventListener('hashchange',()=>openLink(true));
+async function copyOrShow(text,okMsg){if(await copyText(text))return toast(okMsg);
+  $('cp-txt').value=text;$('cp').hidden=false;$('cp-txt').focus();$('cp-txt').select();}
+$('cp-x').onclick=$('cp-ok').onclick=()=>{$('cp').hidden=true;};
+function resultsText(){const r=window.CPL.read(),srcs=E.filter(x=>x.type==='ac'),n=(x,u)=>x===null||x===undefined||!isFinite(x)?'—':eng(x,u,4);
+  const L=['Resultados de Circuit Physics Lab','','Circuito (JSON):',JSON.stringify(exportSpec()),'',
+    't = '+n(r.t,'s')+(ST.running?'':' (simulación en pausa)'),
+    'Modo: '+(!srcs.length?'CC':'CA, f = '+[...new Set(srcs.map(x=>fmtHz(x.f,4)))].join(' y ')+(E.some(x=>x.type==='battery')?', con pila (CC + CA)':'')),
+    '','Componentes en el instante t (V = tensión en bornes; I de «desde» a «hasta»; P = V·I: absorbida, o entregada en las fuentes'+(srcs.length?'; Umáx, Imáx y φ en régimen permanente':'')+'):'];
+  for(const c of r.componentes){if(c.tipo==='wire')continue;
+    L.push('- '+c.nombre+' ('+c.tipo+'): V = '+n(c.v,'V')+'; I = '+n(c.i,'A')+'; P = '+n(c.v*c.i,'W')+(c.Umax===undefined?'':'; Umáx = '+n(c.Umax,'V')+'; Imáx = '+n(c.Imax,'A')+'; φ = '+fmtAng(c.fase)));}
+  const vr=ST.vm.on?vmReading():null;
+  L.push('','Instrumentos ('+{inst:'valor instantáneo',rms:'valor eficaz, rms',max:'valor máximo'}[ST.mode]+'):',
+    '- Voltímetro: '+(!ST.vm.on?'apagado':vr===null?'puntas sin conectar':n(meterVal('vm',vr),'V')));
+  const ams=E.filter(e=>e.type==='ammeter');for(const e of ams)L.push('- '+e.label+': '+n(meterVal(e.id,e.i),'A'));
+  if(!ams.length)L.push('- Sin amperímetros');
+  L.push('',MED.length?'Mediciones registradas ('+MED.length+'; columnas separadas por tabulador, coma decimal):\n'+medTSV():'Mediciones registradas: ninguna');
+  return L.join('\n');}
+$('b-res').onclick=()=>E.length?copyOrShow(resultsText(),'Resultados copiados. Pégalos en el chat de tu IA.'):toast('La mesa está vacía.',true);
+/* Ejemplo del prompt: probado con el link (carga de un capacitor, τ = RC = 1 s) */
+const IA_EX=JSON.stringify({componentes:[{tipo:'battery',nombre:'E1',valores:{V:12},desde:'g',hasta:'a'},{tipo:'switch',nombre:'S1',valores:{closed:false},desde:'a',hasta:'b'},
+  {tipo:'resistor',nombre:'R1',valores:{R:'1k'},desde:'b',hasta:'c'},{tipo:'ammeter',nombre:'A1',desde:'c',hasta:'d'},{tipo:'capacitor',nombre:'C1',valores:{C:'1m'},desde:'d',hasta:'g'}]});
+const IA_PROMPT=`Eres mi asistente de laboratorio para Circuit Physics Lab, un simulador de circuitos de corriente continua y alterna: ${SITE}
+No puedes ver el simulador; trabajamos así: tú armas el circuito con un link, yo lo abro, simulo y te devuelvo los resultados.
+
+CUANDO TE PIDA UN CIRCUITO, responde con:
+1) Una línea explicando el circuito.
+2) Un link así: ${SITE}#circuito=<JSON>
+   El JSON va en una sola línea, sin espacios, codificado con encodeURIComponent. No lo pongas entre paréntesis ni como enlace con texto; escribe la URL completa sola.
+3) El mismo JSON en un bloque de código, por si el link falla.
+
+FORMATO DEL JSON
+{"componentes":[{"tipo":"...","nombre":"...","valores":{...},"desde":"nodo","hasta":"nodo"}]}
+Tipos y valores (entre paréntesis, el rango que acepta el simulador):
+- battery (pila): V en voltios (0.1 a 120); r, resistencia interna en Ω (0 a 10, opcional, 0 si no la pones). "desde" = borne negativo, "hasta" = borne positivo.
+- ac (fuente CA): Vm, amplitud en V (0.1 a 200); f en Hz (0.01 a 1000). v(t) = Vm·sen(2πft) es la tensión de "hasta" respecto de "desde".
+- resistor: R en Ω (0.1 a 1M)
+- bulb (foco): R en Ω (0.1 a 10k)
+- capacitor: C en F (1u a 1)
+- inductor (bobina): L en H (1m a 100)
+- switch (interruptor): closed (true o false). Si no lo pones, empieza abierto.
+- ammeter (amperímetro): sin valores, va en serie.
+- wire (cable): sin valores.
+Los valores aceptan números (0.001) o texto con prefijo: "4.7k", "100m", "47u" (k = kilo, M = mega, m = mili, u = micro, n = nano).
+"nombre" es opcional: de 1 a 12 letras o números, sin espacios ni repetidos (E1, R1, C1, S1…).
+Los nodos tienen nombres libres ("g", "a", "b"…); dos componentes que comparten un nodo están conectados. "desde" y "hasta" deben ser nodos distintos.
+El voltímetro no va en el JSON: si hace falta, dime entre qué nodos pongo sus puntas.
+
+Ejemplo probado: carga de un capacitor (pila de 12 V, interruptor abierto, R = 1 kΩ, amperímetro y C = 1 mF en serie; τ = RC = 1 s).
+${SITE}#circuito=${encodeURIComponent(IA_EX)}
+${IA_EX}
+
+CUANDO TE PEGUE "Resultados de Circuit Physics Lab":
+- Tabla de datos (magnitud, valor, unidad).
+- Comparación con la teoría: fórmula, reemplazo, resultado y % de error.
+- Conclusión breve.
+- Nunca inventes lecturas: si te falta un dato, pídemelo.
+
+Mi primer pedido: `;
+const closeIA=()=>{$('ia').hidden=true;$('b-ia').focus();};
+$('b-ia').onclick=()=>{$('ia').hidden=false;$('ia-copy').focus();};
+$('ia-x').onclick=closeIA;$('ia').onclick=ev=>{if(ev.target.id==='ia')closeIA();};
+$('ia-copy').onclick=()=>copyOrShow(IA_PROMPT,'Prompt copiado. Pégalo en el chat de tu IA y escribe tu pedido.');
+
 /* ---------- guardado local ---------- */
 const KEY='circuit-physics-lab-v1';let saveT=0;
 function scheduleSave(){clearTimeout(saveT);saveT=setTimeout(save,400);}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({v:[...Vx.values()],e:E.map(e=>({id:e.id,type:e.type,a:e.a,b:e.b,label:e.label,V:e.V,r:e.r,Vm:e.Vm,f:e.f,R:e.R,C:e.C,L:e.L,closed:e.closed,i0:e.i0})),counters,nid,vm:ST.vm,mode:ST.mode}));}catch(err){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({v:[...Vx.values()],e:E.map(e=>({id:e.id,type:e.type,a:e.a,b:e.b,label:e.label,V:e.V,r:e.r,Vm:e.Vm,f:e.f,R:e.R,C:e.C,L:e.L,closed:e.closed,i0:e.i0,auto:e.auto})),counters,nid,vm:ST.vm,mode:ST.mode}));}catch(err){}}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(!s||!s.e||!s.e.length)return false;
   Vx=new Map(s.v.map(v=>[v.id,v]));E=s.e.map(e=>Object.assign({v1:0,v2:0,i1:e.i0||0,i2:e.i0||0,i:0,v:0,anim:0},e));counters=s.counters||{};nid=s.nid||1000;
   if(s.vm){ST.vm=s.vm;$('o-vm').checked=!!s.vm.on;}if(s.mode){ST.mode=s.mode;$('o-mode').value=s.mode;}return true;}catch(err){return false;}}
@@ -1132,6 +1408,7 @@ let v0='real';try{if(localStorage.getItem('circuit-physics-lab-vista')==='esq')v
 setView(v0);buildExamples();placeDatos();resize();
 if(load()){dirty();fitView();toast('Se recuperó tu último circuito.');}
 else loadExample('rlc_dc');
+openLink(false);
 requestAnimationFrame(frame);
 })();
 </script>
